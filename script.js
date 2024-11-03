@@ -169,10 +169,26 @@ function showEl(el = "") {
 
 /* adding a comment case 1 */
 btnSend.addEventListener("click", function () {
-  const text = document.querySelectorAll(".comment-send-textarea");
+  const text = document.querySelectorAll(".comment-send-textarea").value;
   if (text) {
-    users.push({});
+    users.comments.push({
+      id: 1,
+      content: `${text}`,
+      createdAt: "1 month ago",
+      score: 12,
+      user: {
+        image: {
+          png: "./images/avatars/image-amyrobson.png",
+          webp: "./images/avatars/image-amyrobson.webp",
+        },
+        username: "amyrobson",
+      },
+      replies: [],
+    });
   }
+  console.log(users);
+  commentSection.innerHTML = "";
+  displayComments(users.comments);
 });
 
 /* replying btn */
