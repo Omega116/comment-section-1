@@ -59,6 +59,7 @@ main {
   display: flex;
   gap: 2rem;
   height: fit-content;
+  z-index: 1;
 }
 
 .vote-box {
@@ -164,15 +165,11 @@ button {
   height: fit-content;
 }
 
-.replies .comment-container {
-  margin: 2rem 0;
-}
-
 .splitter {
   width: 0.2rem;
-  height: 91%;
+  height: 100%;
   background: var(--split-color);
-  margin: 2rem auto 0 auto;
+  margin: auto;
 }
 
 /* add comment element */

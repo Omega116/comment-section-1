@@ -79,15 +79,14 @@ const btnSend = document.querySelector(".btn-send");
 const comment = document.querySelector(".comment-send-textarea");
 const btnsReply = document.querySelectorAll(".btn-reply");
 const commentContainers = document.querySelectorAll(".comment-reply-box");
-const commentsArr = [];
-let votes = [];
-let i = 0;
+let deletingBtns = document.querySelectorAll(".btn-delete");
+let btnsEdit = document.querySelectorAll(".btn-edit");
 
 const textareas = document.querySelectorAll("textarea");
 textareas.forEach((textarea) => (textarea.value = ""));
-const commentsArray = [];
 
 const displayComments = function (comments) {
+  commentSection.innerHTML = "";
   const arr = comments.sort((a, b) => {
     if (a.score > b.score) return -1;
     else return 1;
@@ -124,7 +123,7 @@ const displayComments = function (comments) {
     <img src="images/icon-delete.svg" alt="delete icon" />
     <span>Delete</span>
     </button>
-    <button class="btn btn-reply">
+    <button class="btn btn-edit">
     <img src="images/icon-edit.svg" alt="reply icon" />
     <span>Edit</span>
     </button>`
@@ -143,73 +142,199 @@ const displayComments = function (comments) {
     </div>
     </div>
     </div>
+    <div class="replies">
+              <div class="add-comment-box add-reply comment-container hidden">
+                <img
+                  src="images/avatars/image-juliusomo.png"
+                  alt="juliusomo avatar"
+                />
+                <textarea
+                  type="textarea"
+                  placeholder="Add a comment..."
+                  class="comment-reply-textarea"
+                ></textarea>
+                <button class="btn btn-send-reply"><span>Reply</span></button>
+              </div>
+    </div>
     </div>
     </div>
     
-    </div>
     `;
 
     commentSection.insertAdjacentHTML("beforeend", html);
   });
+  btnsEdit = document.querySelectorAll(".btn-edit");
+  deletingBtns = document.querySelectorAll(".btn-delete");
+  document.querySelector(".comment-send-textarea").value = "";
+  displayReplies(users.comments);
 };
 
+const displayReplies = function (comments) {
+  comments.forEach((comment) => {
+    let id;
+    if (comment.replies.length > 0) {
+      let arr = [];
+      id = comment.id;
+      arr.push(comment.replies);
+      arr = comment.replies.sort((a, b) => {
+        if (a.score >= b.score) return -1;
+        else return 1;
+      });
+      let html = ``;
+      for (let i = 0; i < arr.length; i++) {
+        html += `
+        <div class='splitter'></div>
+        <div class="comment-reply-box" id=${comment.replies[i].id}>
+        <div class="comment-container">
+        <div class="vote-box">
+        <button class="btn-vote">
+        <img src="images/icon-plus.svg" alt="upvote icon" />
+        </button>
+        <p class="vote">${arr[i].score}</p>
+        <button class="btn-vote">
+        <img src="images/icon-minus.svg" alt="downvote icon" />
+        </button>
+        </div>
+        <div class="comment-box">
+        <div class="user-info-box">
+        <div class="user-info">
+        <img
+        class="avatar"
+        src="${arr[i].user.image.png}"
+        alt="${arr[i].user.username} avatar"
+        />
+        
+        <h3 class="user-name">${arr[i].user.username}n</h3>
+        <p class="comment-time">${arr[i].createdAt}</p>
+        </div>
+        <div class="btn-container">
+        ${
+          arr[i].user.username === users.currentUser.username
+            ? `<button class="btn btn-delete">
+          <img src="images/icon-delete.svg" alt="delete icon" />
+          <span>Delete</span>
+          </button>
+          <button class="btn btn-edit">
+          <img src="images/icon-edit.svg" alt="reply icon" />
+          <span>Edit</span>
+          </button>`
+            : `<button class="btn btn-reply">
+      <img src="images/icon-edit.svg" alt="reply icon" />
+      <span>Reply</span>
+      </button>`
+        }
+      
+      </div>
+      </div>
+      <div>
+      <p class="user-comment">
+      ${arr[i].content}
+      </p>
+      </div>
+      </div>
+      </div>
+      <div class="replies">
+      <div
+      class="add-comment-box add-reply comment-container hidden"
+      >
+      <img
+      src="images/avatars/image-juliusomo.png"
+      alt="juliusomo avatar"
+      />
+      <textarea
+      type="textarea"
+      placeholder="Add a comment..."
+      class="comment-reply-textarea"
+      ></textarea>
+      <button class="btn btn-send-reply">
+      <span>Reply</span>
+      </button>
+      </div>
+      </div>
+      </div>`;
+      }
+      document.getElementById(`${id}`).insertAdjacentHTML(
+        "beforeend",
+        `<div class="replies">
+      <div class="add-comment-box add-reply comment-container hidden">
+      <img
+      src="images/avatars/image-juliusomo.png"
+      alt="juliusomo avatar"
+      />
+      <textarea
+      type="textarea"
+      placeholder="Add a comment..."
+      class="comment-reply-textarea"
+      ></textarea>
+      <button class="btn btn-send-reply"><span>Reply</span></button>
+      </div>
+      ${html}`
+      );
+    }
+  });
+};
 displayComments(users.comments);
-/* 
-function showEl(el = "") {
-  if (el != "") {
-    commentsArr.push(el);
-  }
-  commentsArr.sort((a, b) =>
-    Number(a.querySelector(".vote") - Number(b.querySelector(".vote")))
-  );
-  for (let i = 0; i < commentsArr.length; i++) {
-    commentSection.insertAdjacentElement("beforeend", commentsArr[i]);
-  }
-} */
 
 /* adding a comment case 1 */
 btnSend.addEventListener("click", function () {
-  const text = document.querySelectorAll(".comment-send-textarea").value;
+  const text = btnSend.parentNode.querySelector(".comment-send-textarea").value;
+  let arr = [];
+  users.comments.forEach((comment) => {
+    arr.push(comment.replies);
+  });
+  arr = arr.flat();
+  console.log(arr, users.comments);
   if (text) {
     users.comments.push({
-      id: 1,
+      id: arr.length + users.comments.length + 1,
       content: `${text}`,
-      createdAt: "1 month ago",
-      score: 12,
+      createdAt: "Today",
+      score: 0,
       user: {
         image: {
-          png: "./images/avatars/image-amyrobson.png",
-          webp: "./images/avatars/image-amyrobson.webp",
+          png: "./images/avatars/image-juliusomo.png",
+          webp: "./images/avatars/image-juliusomo.webp",
         },
-        username: "amyrobson",
+        username: "juliusomo",
       },
       replies: [],
     });
   }
-  console.log(users);
-  commentSection.innerHTML = "";
+
   displayComments(users.comments);
+  btnSend.parentNode.querySelector(".comment-send-textarea").value = "";
+  /* displayReplies(users.comments); */
 });
 
 /* replying btn */
-btnsReply.forEach((btn) =>
-  btn.addEventListener("click", function (e) {
+document.querySelector("main").addEventListener("click", function (e) {
+  if (e.target.closest(".comment-reply-box") === null) {
     document
       .querySelectorAll(".add-comment-box.add-reply.comment-container")
       .forEach((el) => el.classList.add("hidden"));
-    const target = e.target;
+  }
+});
+window.addEventListener("click", function (e) {
+  const target = e.target;
+  const btn = target.closest(".btn-reply");
 
-    const commentContainer = target.closest(".comment-container");
-    commentContainer.parentNode
+  if (btn) {
+    document
+      .querySelectorAll(".add-comment-box.add-reply.comment-container")
+      .forEach((el) => el.classList.add("hidden"));
+
+    const commentContainer = target.closest(".comment-reply-box");
+
+    commentContainer
       .querySelector(".add-comment-box.add-reply.comment-container")
       .classList.remove("hidden");
 
     const repliedTo = commentContainer.querySelector(".user-name").innerText;
-    commentContainer.parentNode
+    commentContainer
       .querySelector(".replies")
       .querySelector("textarea").placeholder = `Reply to @${repliedTo}...`;
-  })
-);
+  }
+});
 
 window.addEventListener("click", function (e) {
   if (e.target === document.querySelector("main")) {
@@ -222,272 +347,134 @@ window.addEventListener("click", function (e) {
   }
 });
 
-/* reply to comments logic */
-
-/* const btnsSendReply = document.querySelectorAll(".btn-send-reply");
-btnsSendReply.forEach((btn) =>
-  btn.addEventListener("click", function (e) {
-    const target = e.target;
-    const toAddComment = target.closest(".comment-reply-box");
-    console.log(toAddComment);
-    const text = target.parentNode.querySelector("textarea").value;
-    const html = `<div class="comment-reply-box">
-        <div class="comment-container">
-          <div class="vote-box">
-            <button>
-              <img src="images/icon-plus.svg" alt="upvote icon" />
-            </button>
-            <p class="vote">5</p>
-            <button>
-              <img src="images/icon-minus.svg" alt="downvote icon" />
-            </button>
-          </div>
-          <div class="comment-box">
-            <div class="user-info-box">
-              <div class="user-info">
-                <img
-                  class="avatar"
-                  src="images/avatars/image-maxblagun.png"
-                  alt="maxblagun avatar"
-                />
-
-                <h3 class="user-name">maxblagun</h3>
-                <p class="comment-time">2 weeks ago</p>
-              </div>
-              <div class="btn-container">
-
-                <button class="btn btn-reply">
-                  <img src="images/icon-reply.svg" alt="reply icon" />
-                  <span>Reply</span>
-                </button>
-              </div>
-            </div>
-            <div>
-              <p class="user-comment">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum
-                consectetur, cupiditate ratione corporis quis nesciunt in
-                aperiam odio voluptatibus ipsum ducimus eveniet saepe qui et ut
-                inventore beatae facere deserunt.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="replies">
-          <div class="add-comment-box add-reply comment-container hidden">
-            <img
-              src="images/avatars/image-juliusomo.png"
-              alt="juliusomo avatar"
-            />
-            <textarea type="textarea" placeholder="Add a comment..." class="comment-reply-textarea"></textarea>
-            <button class="btn btn-send-reply"><span>Reply</span></button>
-          </div>
-          <div class="splitter"></div>
-          <div class="comment-reply-box">
-            <div class="comment-container">
-              <div class="vote-box">
-                <button>
-                  <img src="images/icon-plus.svg" alt="upvote icon" />
-                </button>
-                <p class="vote">4</p>
-                <button>
-                  <img src="images/icon-minus.svg" alt="downvote icon" />
-                </button>
-              </div>
-              <div class="comment-box">
-                <div class="user-info-box">
-                  <div class="user-info">
-                    <img
-                      class="avatar"
-                      src="images/avatars/image-ramsesmiron.png"
-                      alt="ramsesmiron avatar"
-                    />
-    
-                    <h3 class="user-name">ramsesmiron</h3>
-                    <p class="comment-time">1 weeks ago</p>
-                  </div>
-                  <div class="btn-container">
-
-                    <button class="btn btn-reply">
-                      <img src="images/icon-reply.svg" alt="reply icon" />
-                      <span>Reply</span>
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <p class="user-comment">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum
-                    consectetur, cupiditate ratione corporis quis nesciunt in
-                    aperiam odio voluptatibus ipsum ducimus eveniet saepe qui et ut
-                    inventore beatae facere deserunt.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="replies">
-              <div class="add-comment-box add-reply comment-container hidden">
-                <img
-                  src="images/avatars/image-juliusomo.png"
-                  alt="juliusomo avatar"
-                />
-                <textarea type="textarea" placeholder="Add a comment..." class="comment-reply-textarea"></textarea>
-                <button class="btn btn-send-reply"><span>Reply</span></button>
-              </div>
-            </div>
-          
-          <div class="comment-reply-box">
-            <div class="comment-container">
-              <div class="vote-box">
-                <button>
-                  <img src="images/icon-plus.svg" alt="upvote icon" />
-                </button>
-                <p class="vote">2</p>
-                <button>
-                  <img src="images/icon-minus.svg" alt="downvote icon" />
-                </button>
-              </div>
-              <div class="comment-box">
-                <div class="user-info-box">
-                  <div class="user-info">
-                    <img
-                      class="avatar"
-                      src="images/avatars/image-juliusomo.png"
-                      alt="juliusomo avatar"
-                    />
-    
-                    <h3 class="user-name">juliusomo</h3>
-                    <p class="comment-time">2 days ago</p>
-                  </div>
-                  <div class="btn-container">
-
-                    <button class="btn btn-delete">
-                      <img src="images/icon-delete.svg" alt="delete icon" />
-                      <span>Delete</span>
-                    </button>
-                    <button class="btn btn-reply">
-                      <img src="images/icon-edit.svg" alt="reply icon" />
-                      <span>Edit</span>
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <p class="user-comment">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum
-                    consectetur, cupiditate ratione corporis quis nesciunt in
-                    aperiam odio voluptatibus ipsum ducimus eveniet saepe qui et ut
-                    inventore beatae facere deserunt.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        
-      </div>`;
-    toAddComment.insertAdjacentHTML("beforeend", html);
-    commentContainers.forEach((commentContainer) => {
-      const toRemove = commentContainer.querySelector(
-        ".add-comment-box.add-reply.comment-container"
-      );
-      toRemove.classList.add("hidden");
-    });
-  })
-); */
-
 /* delete comment */
-const deletingBtns = document.querySelectorAll(".btn-delete");
 
 window.addEventListener("click", function (e) {
   const target = e.target;
-  deletingBtns.forEach((btn) => {
-    if (target.closest(".btn-delete") === btn) {
-      let commentToDelete = target.closest(".comment-reply-box");
+  const btn = target.closest(".btn-delete");
+  if (btn) {
+    let commentToDelete = target.closest(".comment-reply-box");
+    document.querySelector(".section-delete").classList.remove("hidden");
+    document.querySelector(".yes").addEventListener("click", function () {
+      document.querySelector(".section-delete").classList.add("hidden");
+      let id = commentToDelete.getAttribute("id");
+      users.comments = users.comments.filter((comment) => comment.id != id);
+      users.comments.map((comment) =>
+        comment.replies.map((reply) => reply.id != id)
+      );
 
-      document.querySelector(".section-delete").classList.remove("hidden");
-      document.querySelector(".yes").addEventListener("click", function () {
-        document.querySelector(".section-delete").classList.add("hidden");
-        commentToDelete.remove();
-      });
-      document.querySelector(".no").addEventListener("click", function () {
-        document.querySelector(".section-delete").classList.add("hidden");
-      });
-    }
-  });
+      displayComments(users.comments);
+    });
+    document.querySelector(".no").addEventListener("click", function () {
+      document.querySelector(".section-delete").classList.add("hidden");
+    });
+  }
 });
 
 /* editing logic */
 
-const btnsEdit = document.querySelectorAll(".btn-edit");
 window.addEventListener("click", function (e) {
-  const btnEdit = e.target.closest(".btn-edit");
+  const target = e.target;
+  const btnEdit = target.closest(".btn-edit");
+  if (btnEdit) {
+    const comment = btnEdit.closest(".comment-reply-box");
+    let text = comment.querySelector(".user-comment").innerText;
 
-  const comment = btnEdit
-    .closest(".comment-box")
-    .querySelector("#user-comment");
-  const text = comment.innerText;
-  if (comment)
-    if (btnEdit) {
-      comment.innerHTML = `<textarea id='user-comment'>${text}</textarea>`;
-    }
-  btnEdit.innerHTML = `<button class="btn btn-edit">
-                      <img src="images/icon-edit.svg" alt="reply icon" />
-                      <span>Submit</span>
-                    </button>`;
+    comment.querySelector(
+      ".user-comment"
+    ).parentNode.innerHTML = `<textarea class='textarea'>${text}</textarea>`;
+    btnEdit.classList.remove("btn-edit");
+    btnEdit.classList.add("btn-submit");
+  }
 });
 
-/* submitting new comment */
-/* window.addEventListener("click", function (e) {
-  console.log(e.target.closest(".btn-submit"));
-  const btnSubmit = e.target.closest(".btn-submit");
+window.addEventListener("dblclick", function (e) {
+  const target = e.target;
+  const btnEdit = target.closest(".btn-submit");
+  if (btnEdit) {
+    const commentBox = btnEdit.closest(".comment-reply-box");
 
-  const comment = btnSubmit
-    .closest(".comment-box")
-    .querySelector("#user-comment");
-  console.log(btnSubmit.closest(".comment-box").querySelector("#user-comment"));
-  const text = comment.innerText;
-  if (comment)
-    if (btnSubmit) {
-      comment.innerHTML = `<p class='user-comment' id='user-comment'>${text}</p>`;
+    let textarea = commentBox.querySelector("textarea");
+    for (const comment of users.comments) {
+      if (comment.id === Number(commentBox.getAttribute("id"))) {
+        comment.content = textarea.value;
+      }
     }
-  btnSubmit.innerHTML = `<button class="btn btn-edit">
-                      <img src="images/icon-edit.svg" alt="reply icon" />
-                      <span>Edit</span>
-                    </button>`;
-}); */
+    displayComments(users.comments);
+  }
+});
 
-/* Logics (time  // vote) */
+/* Logics ( vote) */
 
 window.addEventListener("click", function (e) {
   const target = e.target;
-  console.log(target);
   const btnVote = target.closest(".btn-vote");
-  console.log(btnVote);
   if (btnVote) {
     let type = target.getAttribute("alt");
-    let index = btnVote.closest(".comment-reply-box").getAttribute("id");
+    let id = Number(btnVote.closest(".comment-reply-box").getAttribute("id"));
     if (type === "upvote icon") {
-      votes[index]++;
-      btnVote.closest(".comment-reply-box").querySelector(".vote").innerText =
-        votes[index];
+      users.comments.map((comment) => {
+        if (comment.id === id) comment.score++;
+      });
+      users.comments.forEach((comment) => {
+        comment.replies.forEach((reply) => {
+          if (reply.id === id) {
+            reply.score++;
+          }
+        });
+      });
+
+      displayComments(users.comments);
     } else {
-      if (votes[index] > 0) {
-        votes[index]--;
-        btnVote.closest(".comment-reply-box").querySelector(".vote").innerText =
-          votes[index];
-      }
+      users.comments.map((comment) => {
+        if (comment.id === id && comment.score > 0) comment.score--;
+      });
+      users.comments.forEach((comment) => {
+        comment.replies.forEach((reply) => {
+          if (reply.id === id && reply.score > 0) {
+            reply.score--;
+          }
+        });
+      });
+
+      displayComments(users.comments);
     }
   }
 });
 
-/* test function  */
+/* reply to comments */
+window.addEventListener("click", function (e) {
+  const target = e.target;
+  const btn = target.closest(".btn-send-reply");
+  if (btn) {
+    const text = btn.parentNode.querySelector("textarea").value;
+    if (text) {
+      let id = Number(btn.closest(".comment-reply-box").getAttribute("id"));
+      let counter = 1;
+      users.comments.forEach((comment) => {
+        counter++;
+        counter += comment.replies.length;
+      });
 
-function showEl(arr) {
-  arr.sort(
-    (a, b) =>
-      Number(a.querySelector(".vote").innerText) -
-      Number(b.querySelector(".vote").innerText)
-  );
-  for (let i = 0; i < arr.length; i++) {
-    commentSection.insertAdjacentHTML("beforeend", arr[i]);
+      users.comments.forEach((comment) => {
+        if (comment.id === id) {
+          comment.replies.push({
+            id: counter,
+            content: text,
+            createdAt: "Today",
+            score: 0,
+            replyingTo: comment.user.username,
+            user: {
+              image: {
+                png: "./images/avatars/image-juliusomo.png",
+                webp: "./images/avatars/image-juliusomo.webp",
+              },
+              username: "juliusomo",
+            },
+          });
+          displayComments(users.comments);
+        }
+      });
+    }
   }
-}
+});
