@@ -325,7 +325,7 @@ textarea::placeholder {
   }
 }
 
-.active-user {
+.to-reply-to {
   color: #3e52a3;
   font-weight: 500;
 }

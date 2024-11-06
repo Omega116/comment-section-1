@@ -41,7 +41,7 @@ const users = {
         {
           id: 3,
           content:
-            "If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
+            "<span class='to-reply-to'>@maxblagun </span>If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
           createdAt: "1 week ago",
           score: 4,
           replyingTo: "maxblagun",
@@ -56,7 +56,7 @@ const users = {
         {
           id: 4,
           content:
-            "I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
+            "<span class='to-reply-to'>@maxblagun </span>I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
           createdAt: "2 days ago",
           score: 2,
           replyingTo: "ramsesmiron",
@@ -468,10 +468,14 @@ window.addEventListener("click", function (e) {
           comment.replies.push({
             id: counter,
             content:
-              `<span class='active-user'>
+              `<span class='to-reply-to'>
       ${"@" + comment.user.username}
       </span>` + text,
-            createdAt: "Today" + ` ${hours}:${minutes}`,
+            createdAt:
+              "Today" +
+              ` ${hours}`.padStart(2, "0") +
+              ":" +
+              `${minutes}`.padStart(2, "0"),
             score: 0,
             replyingTo: comment.user.username,
             user: {
