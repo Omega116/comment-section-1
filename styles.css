@@ -324,3 +324,8 @@ textarea::placeholder {
     bottom: 3rem;
   }
 }
+
+.active-user {
+  color: #3e52a3;
+  font-weight: 500;
+}

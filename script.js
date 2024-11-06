@@ -228,7 +228,10 @@ const displayReplies = function (comments) {
       </div>
       <div>
       <p class="user-comment">
-      ${"@" + comment.user.username + " " + arr[i].content}
+      <span class='active-user'>
+      ${"@" + comment.user.username}
+      </span>
+      ${arr[i].content}
       </p>
       </div>
       </div>
