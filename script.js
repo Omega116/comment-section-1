@@ -491,12 +491,12 @@ window.addEventListener("click", function (e) {
   }
 });
 
-function hardDelete(arr, id) {
-  arr.forEach((comment) => {
-    let replies = [];
-    replies = comment.replies.filter((reply) => reply.id != id);
-    comment.replies = replies;
-  });
-  console.log(arr.filter((comment) => comment.id != id));
-  return arr.filter((comment) => comment.id != id);
+function hardDeleteReplies(arr, id) {
+  let deleted = false;
+  while (!deleted) {
+    arr.forEach((comment) => {
+      if (!replies) {
+      }
+    });
+  }
 }
