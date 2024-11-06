@@ -228,9 +228,6 @@ const displayReplies = function (comments) {
       </div>
       <div>
       <p class="user-comment">
-      <span class='active-user'>
-      ${"@" + comment.user.username}
-      </span>
       ${arr[i].content}
       </p>
       </div>
@@ -469,7 +466,10 @@ window.addEventListener("click", function (e) {
         if (comment.id === id) {
           comment.replies.push({
             id: counter,
-            content: text,
+            content:
+              `<span class='active-user'>
+      ${"@" + comment.user.username}
+      </span>` + text,
             createdAt: "Today",
             score: 0,
             replyingTo: comment.user.username,
