@@ -347,7 +347,7 @@ window.addEventListener("click", function (e) {
   }
 });
 
-/* delete comment */
+/* deleting  comments */
 
 window.addEventListener("click", function (e) {
   const target = e.target;
@@ -357,10 +357,11 @@ window.addEventListener("click", function (e) {
     document.querySelector(".section-delete").classList.remove("hidden");
     document.querySelector(".yes").addEventListener("click", function () {
       document.querySelector(".section-delete").classList.add("hidden");
-      let id = commentToDelete.getAttribute("id");
+      let id = Number(commentToDelete.getAttribute("id"));
       users.comments = users.comments.filter((comment) => comment.id != id);
-      users.comments.map((comment) =>
-        comment.replies.map((reply) => reply.id != id)
+      users.comments.forEach(
+        (comment) =>
+          (comment.replies = comment.replies.filter((reply) => reply.id != id))
       );
 
       displayComments(users.comments);
@@ -393,12 +394,17 @@ window.addEventListener("dblclick", function (e) {
   const btnEdit = target.closest(".btn-submit");
   if (btnEdit) {
     const commentBox = btnEdit.closest(".comment-reply-box");
-
+    let id = Number(commentBox.getAttribute("id"));
     let textarea = commentBox.querySelector("textarea");
     for (const comment of users.comments) {
-      if (comment.id === Number(commentBox.getAttribute("id"))) {
+      if (comment.id === id) {
         comment.content = textarea.value;
       }
+      comment.replies.forEach((reply) => {
+        if (reply.id === id) {
+          reply.content = textarea.value;
+        }
+      });
     }
     displayComments(users.comments);
   }
