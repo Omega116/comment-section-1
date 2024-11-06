@@ -346,7 +346,6 @@ window.addEventListener("click", function (e) {
     });
   }
 });
-
 /* deleting  comments */
 
 window.addEventListener("click", function (e) {
@@ -358,12 +357,7 @@ window.addEventListener("click", function (e) {
     document.querySelector(".yes").addEventListener("click", function () {
       document.querySelector(".section-delete").classList.add("hidden");
       let id = Number(commentToDelete.getAttribute("id"));
-      users.comments = users.comments.filter((comment) => comment.id != id);
-      users.comments.forEach(
-        (comment) =>
-          (comment.replies = comment.replies.filter((reply) => reply.id != id))
-      );
-
+      users.comments = hardDelete(users.comments, id);
       displayComments(users.comments);
     });
     document.querySelector(".no").addEventListener("click", function () {
@@ -492,3 +486,21 @@ window.addEventListener("click", function (e) {
     }
   }
 });
+
+function hardDelete(arr, id) {
+  let finalArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].id != id) {
+      finalArr.push(arr[i]);
+    }
+    let nestedArr = [];
+    for (let j = 0; j < arr[i].replies.length; j++) {
+      if (arr[i].replies[j].id != id) {
+        nestedArr.push(arr[i].replies[j]);
+      }
+    }
+    arr[i].replies = nestedArr;
+  }
+  console.log(finalArr);
+  return finalArr;
+}
