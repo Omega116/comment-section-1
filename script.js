@@ -461,7 +461,8 @@ window.addEventListener("click", function (e) {
         counter++;
         counter += comment.replies.length;
       });
-
+      let hours = new Date().getHours();
+      let minutes = new Date().getMinutes();
       users.comments.forEach((comment) => {
         if (comment.id === id) {
           comment.replies.push({
@@ -470,7 +471,7 @@ window.addEventListener("click", function (e) {
               `<span class='active-user'>
       ${"@" + comment.user.username}
       </span>` + text,
-            createdAt: "Today",
+            createdAt: "Today" + ` ${hours}:${minutes}`,
             score: 0,
             replyingTo: comment.user.username,
             user: {
