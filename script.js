@@ -282,11 +282,15 @@ btnSend.addEventListener("click", function () {
   users.comments.forEach((comment) => {
     arr.push(comment.replies);
   });
+  let counter = 1;
+  users.comments.forEach((comment) => {
+    counter++;
+    counter += comment.replies.length;
+  });
   arr = arr.flat();
-  console.log(arr, users.comments);
   if (text) {
     users.comments.push({
-      id: arr.length + users.comments.length + 1,
+      id: counter,
       content: `${text}`,
       createdAt: "Today",
       score: 0,
@@ -488,19 +492,11 @@ window.addEventListener("click", function (e) {
 });
 
 function hardDelete(arr, id) {
-  let finalArr = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].id != id) {
-      finalArr.push(arr[i]);
-    }
-    let nestedArr = [];
-    for (let j = 0; j < arr[i].replies.length; j++) {
-      if (arr[i].replies[j].id != id) {
-        nestedArr.push(arr[i].replies[j]);
-      }
-    }
-    arr[i].replies = nestedArr;
-  }
-  console.log(finalArr);
-  return finalArr;
+  arr.forEach((comment) => {
+    let replies = [];
+    replies = comment.replies.filter((reply) => reply.id != id);
+    comment.replies = replies;
+  });
+  console.log(arr.filter((comment) => comment.id != id));
+  return arr.filter((comment) => comment.id != id);
 }
