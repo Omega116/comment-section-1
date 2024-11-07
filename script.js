@@ -363,7 +363,7 @@ window.addEventListener("click", function (e) {
       sectionDelete.classList.add("hidden");
       const id = Number(commentToDelete.getAttribute("id"));
       users.comments = hardDelete(users.comments, id);
-      displayComments(users.comments); // Remove event listeners after usage to prevent duplication
+      displayComments(users.comments);
       document
         .querySelector(".yes")
         .removeEventListener("click", handleYesClick);
