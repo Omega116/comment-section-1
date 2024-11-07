@@ -356,20 +356,38 @@ window.addEventListener("click", function (e) {
   const target = e.target;
   const btn = target.closest(".btn-delete");
   if (btn) {
-    let commentToDelete = target.closest(".comment-reply-box");
-    document.querySelector(".section-delete").classList.remove("hidden");
-    document.querySelector(".yes").addEventListener("click", function () {
-      document.querySelector(".section-delete").classList.add("hidden");
-      let id = Number(commentToDelete.getAttribute("id"));
+    const commentToDelete = target.closest(".comment-reply-box");
+    const sectionDelete = document.querySelector(".section-delete");
+    sectionDelete.classList.remove("hidden");
+    const handleYesClick = function () {
+      sectionDelete.classList.add("hidden");
+      const id = Number(commentToDelete.getAttribute("id"));
       users.comments = hardDelete(users.comments, id);
-      displayComments(users.comments);
-    });
-    document.querySelector(".no").addEventListener("click", function () {
-      document.querySelector(".section-delete").classList.add("hidden");
-    });
+      displayComments(users.comments); // Remove event listeners after usage to prevent duplication
+      document
+        .querySelector(".yes")
+        .removeEventListener("click", handleYesClick);
+      document.querySelector(".no").removeEventListener("click", handleNoClick);
+    };
+    const handleNoClick = function () {
+      sectionDelete.classList.add("hidden");
+      document
+        .querySelector(".yes")
+        .removeEventListener("click", handleYesClick);
+      document.querySelector(".no").removeEventListener("click", handleNoClick);
+    };
+    document.querySelector(".yes").addEventListener("click", handleYesClick);
+    document.querySelector(".no").addEventListener("click", handleNoClick);
   }
 });
-
+function hardDelete(arr, id) {
+  arr.forEach((comment) => {
+    comment.replies = comment.replies.filter((reply) => reply.id !== id);
+  });
+  arr = arr.filter((comment) => comment.id !== id);
+  console.log(arr);
+  return arr;
+}
 /* editing logic */
 
 window.addEventListener("click", function (e) {
@@ -490,13 +508,3 @@ window.addEventListener("click", function (e) {
     }
   }
 });
-
-function hardDeleteReplies(arr, id) {
-  let deleted = false;
-  while (!deleted) {
-    arr.forEach((comment) => {
-      if (!replies) {
-      }
-    });
-  }
-}
